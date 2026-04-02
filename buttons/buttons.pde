@@ -19,15 +19,19 @@ void setup () {
 void draw () {
   
   //buttons
+    tactile (175, 700, 50, lightgreen);
     fill (lightgreen);
     circle (175, 700, 100);
     
+    tactile (400, 700, 50, green);
     fill (green);
     circle (400, 700, 100);
     
+    tactile (625, 700, 50, darkgreen);
     fill (darkgreen);
     circle (625, 700, 100);
     
+  stroke (black);
   fill (chosencolour);
   square (175, 100, 450);
   
@@ -35,6 +39,20 @@ void draw () {
 
 void mouseReleased () {///this is an already existing function
   if (dist(175, 700, mouseX, mouseY) < 50) {
-    
+    chosencolour=lightgreen;
+  }
+  if (dist(400, 700, mouseX, mouseY) < 50) {
+    chosencolour=green;
+  }
+  if (dist(625, 700, mouseX, mouseY) < 50) {
+    chosencolour=darkgreen;
+  }
+}
+
+void tactile (int x, int y, int r, int c) {
+  if (dist(x, y, mouseX, mouseY)<r) {
+    stroke (c);
+  } else {
+    stroke (black);
   }
 }
