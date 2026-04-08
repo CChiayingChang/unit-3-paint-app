@@ -15,24 +15,43 @@ float sliderY;
 float diameter;
 float strokesize;
 PImage stamp; //loads image
+boolean Stamp; //true or false
+PImage eraser;
+//int drawcolour;
+int ERASER;
 
 
 void setup () {
   size (1050, 750);
   background (white);
+ // drawcolour=whatcolour;
   whatcolour=red;
   toggle = -1;
   diameter=50;
   sliderY=140;
-  //stamp = loadImage (".jpg");
+  stamp = loadImage ("stamp.PNG");
+  Stamp=false;
+  eraser=loadImage ("eraser.png");
+  ERASER=1;
 }
 
 void draw () {
-  ///image (cat, 100, 100, 100, 100); //image, x, y, w, h
+  
   //the toolbar
   fill (lightgrey);
   noStroke ();
   rect (0, 0, 150, 1000);
+  
+  //stamp button
+  if (Stamp==false) {
+    fill (white);
+  } else {
+    fill (darkgrey);
+  }
+  strokeWeight (2);
+  tactilerectangle (30, 120, 530, 608);
+  rect (30, 530, 90, 78);
+  image (stamp, 48, 535, 55, 70); //image, x, y, w, h
   
   slider (75); //the slider for thickness
   
@@ -42,12 +61,25 @@ void draw () {
     tactilerectangle (45, 105, 330, 365);
     rect (45, 330, 60, 35);
     
+   //for the colour palette
   if (toggle >0) {
     colourwindow (130, 345);
   }
   
+  //eraser tool
+  strokeWeight (4);
+  fill (#F59797);
+  rect (45, 380, 60, 35);
+  image (eraser, 45, 380, 60, 35);
+  
   println (mouseX, mouseY);
 }
+
+
+
+//things to do: make stamp stamp in middle of image
+//eraser tool
+//figure out colour palette
 
 void button (int x, int y, int c) {
   fill (c);
@@ -64,8 +96,8 @@ void tactilecolours (int x, int y, int c) {
   }
 }
 
-void tactilerectangle (int xr, int xb, int yt , int yb) {
-  if (mouseX>xr && mouseX < xb && mouseY>yt && mouseY<yb) {
+void tactilerectangle (int xr, int xl, int yt , int yb) {
+  if (mouseX>xr && mouseX < xl && mouseY>yt && mouseY<yb) {
     stroke (white);
   } else {
     stroke (black);
@@ -78,6 +110,14 @@ void mouseReleased () {
   }
   changing ();
   moveslider ();
+  STAMP ();
+  if (mouseX>30 && mouseX < 120 && mouseY>530 && mouseY<608) {
+    Stamp=!Stamp; ///if its false, becomes true, if its true, becomes false
+  }
+  
+  if (mouseX>45 && mouseX<105 && mouseY>380 && mouseY<415) {
+    ERASER=ERASER*-1;
+  }
 }
 
 void changecolour (int x, int y, int c) {//if the mouse is over the coordinates, it will change the colours
@@ -115,7 +155,11 @@ void buttons (int x, int y) {
 void colourwindow (int x, int y) {//this is the window thawt pops up with the colour palette
   pushMatrix ();
     translate (x, y);
-    fill (darkgrey);
+    //if (toggle>0) {
+      fill (darkgrey);
+    //} else {
+      //noFill ();
+    //}
     noStroke ();
     triangle (0, 0, 50, -50, 50, 50);
     rect (50, -140, 150, 270);
@@ -124,13 +168,9 @@ void colourwindow (int x, int y) {//this is the window thawt pops up with the co
 }
 
 void mouseDragged () { 
-  //drawing the squiggly line
-  stroke (whatcolour);
-  if (mouseX>150) {//prevents seeing flashes of colour from drawing on toolbar
-    strokeWeight (diameter);
-    line (pmouseX, pmouseY, mouseX, mouseY); //pmouseX and pmouseY are the mouse's previous coordinates
-  }
+  STAMP ();
   moveslider ();
+  Eraser ();
 }
 
 void slider (int x) {
@@ -149,6 +189,26 @@ void moveslider () {
   diameter=map(sliderY, 30, 250, 1, 100);//changing sliderY, converting from range of sliderY (30, 250) to thickness range (5, 100)
 }
 
-void newbutton () {
+void STAMP () {
+  if (mouseX>150) {
+    if (Stamp==false) {//for single= its equa to that value, ==you're ocmparing them
+      //drawing the squiggly line
+     // stroke (drawcolour);
+     stroke (whatcolour);
+      if (mouseX>150) {//prevents seeing flashes of colour from drawing on toolbar
+        strokeWeight (diameter);
+        line (pmouseX, pmouseY, mouseX, mouseY); //pmouseX and pmouseY are the mouse's previous coordinates
+      } 
+    } else {
+        image (stamp, mouseX, mouseY, diameter, diameter*1.27);
+    }
+  }
+}
 
+void Eraser () {
+  if (ERASER<1) {
+    whatcolour=white;
+  } else {
+    whatcolour=red;
+  }
 }
