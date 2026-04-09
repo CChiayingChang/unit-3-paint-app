@@ -19,6 +19,7 @@ boolean Stamp; //true or false
 PImage eraser;
 //int drawcolour;
 int ERASER;
+PGraphics drawlayer;
 
 
 void setup () {
@@ -33,14 +34,19 @@ void setup () {
   Stamp=false;
   eraser=loadImage ("eraser.png");
   ERASER=1;
+  drawlayer= createGraphics (1050, 750); //w, h
 }
 
 void draw () {
+  background (255);
+  
+  //the drawing screen
+  image (drawlayer, 0, 0);
   
   //the toolbar
   fill (lightgrey);
   noStroke ();
-  rect (0, 0, 150, 1000);
+  rect (0, 0, 150, 750);
   
   //stamp button
   if (Stamp==false) {
@@ -67,10 +73,15 @@ void draw () {
   }
   
   //eraser tool
-  strokeWeight (4);
-  fill (#F59797);
+  tactilerectangle (45, 105, 380, 405);
+  strokeWeight (2);
+  if (ERASER<1) {
+    fill (white);
+  } else {
+    fill (#F59797);
+  }
   rect (45, 380, 60, 35);
-  image (eraser, 45, 380, 60, 35);
+  image (eraser, 55, 380, 40, 35);
   
   println (mouseX, mouseY);
 }
@@ -111,11 +122,11 @@ void mouseReleased () {
   changing ();
   moveslider ();
   STAMP ();
-  if (mouseX>30 && mouseX < 120 && mouseY>530 && mouseY<608) {
+  if (mouseX>30 && mouseX < 120 && mouseY>530 && mouseY<608) {//for turning the stamp off and on
     Stamp=!Stamp; ///if its false, becomes true, if its true, becomes false
   }
   
-  if (mouseX>45 && mouseX<105 && mouseY>380 && mouseY<415) {
+  if (mouseX>45 && mouseX<105 && mouseY>380 && mouseY<415) {//for turning the eraser off and on
     ERASER=ERASER*-1;
   }
 }
@@ -190,25 +201,27 @@ void moveslider () {
 }
 
 void STAMP () {
-  if (mouseX>150) {
-    if (Stamp==false) {//for single= its equa to that value, ==you're ocmparing them
-      //drawing the squiggly line
-     // stroke (drawcolour);
-     stroke (whatcolour);
-      if (mouseX>150) {//prevents seeing flashes of colour from drawing on toolbar
-        strokeWeight (diameter);
-        line (pmouseX, pmouseY, mouseX, mouseY); //pmouseX and pmouseY are the mouse's previous coordinates
-      } 
-    } else {
-        image (stamp, mouseX, mouseY, diameter, diameter*1.27);
+  drawlayer.beginDraw ();
+  
+    if (mouseX>150) {
+      if (Stamp==false) {//for single= its equa to that value, ==you're ocmparing them
+        //drawing the squiggly line
+       // stroke (drawcolour);
+       drawlayer.stroke (whatcolour);
+        if (mouseX>150) {//prevents seeing flashes of colour from drawing on toolbar
+          drawlayer.strokeWeight (diameter);
+          drawlayer.line (pmouseX, pmouseY, mouseX, mouseY); //pmouseX and pmouseY are the mouse's previous coordinates
+        } 
+      } else {
+          drawlayer.image (stamp, mouseX, mouseY, diameter, diameter*1.27);
+      }
     }
-  }
+    
+  drawlayer.endDraw ();
 }
 
 void Eraser () {
   if (ERASER<1) {
     whatcolour=white;
-  } else {
-    whatcolour=red;
   }
 }
