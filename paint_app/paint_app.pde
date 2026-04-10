@@ -113,12 +113,6 @@ void draw () {
   println (mouseX, mouseY);
 }
 
-
-
-//things to do: make stamp stamp in middle of image
-//eraser tool
-//figure out colour palette
-
 void button (int x, int y, int c) {
   fill (c);
   strokeWeight (2);
@@ -167,19 +161,24 @@ void mouseReleased () {
   }
   
   if (mouseX>20 && mouseX<80 && mouseY>628 && mouseY<663) {//for the save button; saves image
-    selectOutput ("Choose a name for your new image file", "saveImage");
+    selectOutput ("Choose a name for your new image file", "saveImage"); //message, save function
     //selectOutput opens the file selection window, first message at top of window, second is function inside of program
+  }
+  
+  if (mouseX>20 && mouseX<80 && mouseY>578 && mouseY<613) {
+    selectInput ("Select an image to load", "openImage"); //message, load function
   }
 }
 
 void saveImage (File f) {//parameter is for file you choose, f is jsut generic name for file
-  if (f ! =null) {
-    
+  if (f != null) { //null is checking if it's not null, if they didn't press cancel
+    PImage canvas = get (100, 0, 950, 750); //x, y, w, h, saving as new image
+    canvas.save(f.getAbsolutePath()); 
   }
 }
 
 void changecolour (int x, int y, int c) {//if the mouse is over the coordinates, it will change the colours in void changing
-  if (mouseX>x-25 && mouseX <x+25 && mouseY>y-25 && mouseY<y+25 && toggle>0) {
+  if (dist (x, y, mouseX, mouseY)<25) {
     whatcolour=c;
   }
 }
@@ -229,7 +228,11 @@ void mouseDragged () {
 
 void slider (int x) {
   strokeWeight (3);
-  stroke (black);
+  if ((mouseX>50-diameter/2 && mouseX< 50+diameter/2 && mouseY>sliderY-diameter/2 && mouseY<sliderY+diameter/2) || (mouseX>48 && mouseX<52 && mouseY>30 && mouseY<250) ) {
+    stroke (white);
+  } else {
+    stroke (black);
+  } //if the mouse is over the slider line, or if its over the slider knob, the stroke turns white
   line (x, 30, x, 250);
   fill (whatcolour);
   strokeWeight (2);
@@ -268,3 +271,10 @@ void Eraser () {
     whatcolour=white;
   }
 }
+
+//to do:
+//make stamp in middle of image
+//make load and save button
+//organize code
+//clicking colour button should turn stamp off
+//make it so that you can't draw when clicking the colour buttons
