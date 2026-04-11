@@ -17,7 +17,6 @@ float strokesize;
 PImage stamp; //loads image
 boolean Stamp; //true or false
 PImage eraser;
-//int drawcolour;
 int ERASER;
 PGraphics drawlayer;
 
@@ -136,22 +135,33 @@ void tactilerectangle (int xr, int xl, int yt , int yb) {//for making the outlin
   }
 }
 
-void mouseReleased () {
+void mousePressed () {
   if (mouseX>20 && mouseX<80 && mouseY> 330 && mouseY<365) {
     toggle = toggle * -1; //for the colour palette popup window
     if (ERASER<0) {
       ERASER =ERASER*-1; //to turn off the eraser, but only if the eraser is on
     }
+    Stamp=false;
   }
+  
+    if (toggle > 0 && (mouseX<155 && mouseX>100) || mouseX>305 || mouseY<205 || mouseY>475) {
+    toggle=-1; //if the colour palette is on and the mouse clicks on the drawing screen (outside the toolbar and the rectangle part of the colour palette)
+    //then the colour palette will disappear
+  }
+  
   changing ();//will change the colours of the colour indicator
   moveslider ();
   STAMP ();
   if (mouseX>20 && mouseX <80 && mouseY>435 && mouseY<513) {//for turning the stamp off and on
     Stamp=!Stamp; ///if its false, becomes true, if its true, becomes false
+    if (ERASER<0) {
+      ERASER=ERASER*-1;//if the eraser is on, turn it off
+    }
   }
   
   if (mouseX>20 && mouseX<80 && mouseY>380 && mouseY<415) {//for turning the eraser off and on
     ERASER=ERASER*-1;
+    Stamp=false;
   }
   
   if (mouseX>20 && mouseX<80 && mouseY>528 && mouseY<563) {//for new button-> clears the screen
@@ -178,20 +188,24 @@ void saveImage (File f) {//parameter is for file you choose, f is jsut generic n
 }
 
 void changecolour (int x, int y, int c) {//if the mouse is over the coordinates, it will change the colours in void changing
-  if (dist (x, y, mouseX, mouseY)<25) {
+  if (dist (x, y, mouseX, mouseY)<25 && toggle>0) {//if the mouse clicks on the coordinates of the colour palette, and the window is open
     whatcolour=c;
+    if (ERASER<1) {//turns the eraser off if you press on the colour palette colours
+      ERASER=ERASER*-1;
+    }
+    Stamp=false; //turns the stamp off
   }
 }
 
 void changing () {//this will change the colours of the colour indicator
-  changecolour (222, 250, red);
-  changecolour (288, 250, orange);
-  changecolour (222, 310, yellow);
-  changecolour (288, 310, green);
-  changecolour (222, 370, blue);
-  changecolour (288, 370, purple);
-  changecolour (222, 430, lightgrey);
-  changecolour (288, 430, black);
+  changecolour (197, 250, red);
+  changecolour (263, 250, orange);
+  changecolour (197, 310, yellow);
+  changecolour (263, 310, green);
+  changecolour (197, 370, blue);
+  changecolour (263, 370, purple);
+  changecolour (197, 430, lightgrey);
+  changecolour (263, 430, black);
 }
 
 void buttons (int x, int y) {
@@ -233,17 +247,17 @@ void slider (int x) {
   } else {
     stroke (black);
   } //if the mouse is over the slider line, or if its over the slider knob, the stroke turns white
-  line (x, 30, x, 250);
+  line (x, 50, x, 270);
   fill (whatcolour);
   strokeWeight (2);
   circle (x, sliderY, diameter);
 }
 
 void moveslider () {
-  if (mouseX>25 && mouseX<75 && mouseY>30 && mouseY<250) {
+  if (mouseX>25 && mouseX<75 && mouseY>50 && mouseY<270) {
     sliderY=mouseY;
   }
-  diameter=map(sliderY, 30, 250, 1, 100);//changing sliderY, converting from range of sliderY (30, 250) to thickness range (5, 100)
+  diameter=map(sliderY, 50, 270, 100, 1);//changing sliderY, converting from range of sliderY (30, 250) to thickness range (5, 100)
 }
 
 void STAMP () {
@@ -278,3 +292,4 @@ void Eraser () {
 //organize code
 //clicking colour button should turn stamp off
 //make it so that you can't draw when clicking the colour buttons
+//make it so colour is off hwen you click eraser
