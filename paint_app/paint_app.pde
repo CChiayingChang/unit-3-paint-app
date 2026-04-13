@@ -24,7 +24,6 @@ PGraphics drawlayer;
 void setup () {
   size (1050, 750);
   background (white);
- // drawcolour=whatcolour;
   whatcolour=red;
   toggle = -1;
   diameter=50;
@@ -47,32 +46,33 @@ void draw () {
   noStroke ();
   rect (0, 0, 100, 750);
   
-  slider (50); //the slider for brush thickness
+  //slider for brush thickness
+  slider (50);
   
-  //colour indicator
-    strokeWeight (2);
-    tactilerectangle (20, 80, 330, 365);
-    rect (20, 330, 60, 35);
-    textSize (20);
-    fill (black);
-    text ("colour", 23, 353);
-    fill (whatcolour);
+  //colour indicator button
+   strokeWeight (2);
+   tactilerectangle (20, 80, 290, 325);
+   rect (20, 290, 60, 35);
+   textSize (20);
+   fill (black);
+   text ("colour", 23, 313);
+   fill (whatcolour);
     
-   //for the colour palette
+   //for the colour palette-->turns it on if button is pressed
   if (toggle >0) {
-    colourwindow (105, 345);
+    colourwindow (105, 305);
   }
   
   //eraser tool
-  tactilerectangle (20, 80, 380, 420);
+  tactilerectangle (20, 80, 340, 375);
   strokeWeight (2);
   if (ERASER<1) {
     fill (#F59797);
   } else {
     fill (white);
   }
-  rect (20, 380, 60, 35);
-  image (eraser, 35, 380, 40, 35);
+  rect (20, 340, 60, 35);
+  image (eraser, 35, 340, 40, 35); //image, x, y, w, h
   
   //stamp button
   if (Stamp==false) {
@@ -102,12 +102,12 @@ void draw () {
   text ("load", 32, 605);
   
   //save button
-  tactilerectangle (20, 80, 628, 663);
+  tactilerectangle (20, 80, 676, 711);
   fill (black);
-  rect (20, 628, 60, 35);
+  rect (20, 676, 60, 35);
   fill (white);
   textSize (20);
-  text ("save", 31, 650);
+  text ("save", 31, 698);
   
   println (mouseX, mouseY);
 }
@@ -119,15 +119,17 @@ void button (int x, int y, int c) {
   circle (x, y, 50);
 }
 
-void tactilecolours (int x, int y) {//for making the colour button outlines white when you hover over it
-  if (mouseX>x+172 && mouseX <x+222 && mouseY>y+225 && mouseY<y+275) {//the numbers are the coordinates of colourwindow + coordinates of buttons inside colourwindow +- 25 (radius)
+//for making the colour button outlines white when you hover over it
+void tactilecolours (int x, int y) {
+  if (mouseX>x+172 && mouseX <x+222 && mouseY>y+185 && mouseY<y+235) {//the numbers are the coordinates of colourwindow + coordinates of buttons inside colourwindow +- 25 (radius)
     stroke (white);
   } else {
     stroke (black);
   }
 }
 
-void tactilerectangle (int xr, int xl, int yt , int yb) {//for making the outlines of the rect buttons white when hovering
+//for making the outlines of the rect buttons white when hovering
+void tactilerectangle (int xr, int xl, int yt , int yb) {
   if (mouseX>xr && mouseX < xl && mouseY>yt && mouseY<yb) {
     stroke (white);
   } else {
@@ -136,45 +138,56 @@ void tactilerectangle (int xr, int xl, int yt , int yb) {//for making the outlin
 }
 
 void mousePressed () {
-  if (mouseX>20 && mouseX<80 && mouseY> 330 && mouseY<365) {
-    toggle = toggle * -1; //for the colour palette popup window
+  //colour palette window button
+  if (mouseX>20 && mouseX<80 && mouseY> 290 && mouseY<325) {
+    toggle = toggle * -1; //turns colour palette window on and off
+    //if the eraser is on and you press the colour palette button, the eraser turns off
     if (ERASER<0) {
-      ERASER =ERASER*-1; //to turn off the eraser, but only if the eraser is on
+      ERASER =ERASER*-1;
     }
+    //stamp turns off when you press the colour palette button
     Stamp=false;
   }
   
-    if (toggle > 0 && (mouseX<155 && mouseX>100) || mouseX>305 || mouseY<205 || mouseY>475) {
-    toggle=-1; //if the colour palette is on and the mouse clicks on the drawing screen (outside the toolbar and the rectangle part of the colour palette)
-    //then the colour palette will disappear
+  //colour palette->if its on and you click on the drawing screen outside of the colour palette (the rectangle part), the palette disappears
+  if (toggle > 0 && (mouseX<155 && mouseX>100) || mouseX>305 || mouseY<165 || mouseY>435) {
+    toggle=-1;
   }
   
   changing ();//will change the colours of the colour indicator
+  
   moveslider ();
+  
   STAMP ();
-  if (mouseX>20 && mouseX <80 && mouseY>435 && mouseY<513) {//for turning the stamp off and on
+  //turns stamp on and off
+  if (mouseX>20 && mouseX <80 && mouseY>435 && mouseY<513) {
     Stamp=!Stamp; ///if its false, becomes true, if its true, becomes false
+    //if the eraser is on, turn it off when stamp button is clicked
     if (ERASER<0) {
-      ERASER=ERASER*-1;//if the eraser is on, turn it off
+      ERASER=ERASER*-1;
     }
   }
   
-  if (mouseX>20 && mouseX<80 && mouseY>380 && mouseY<415) {//for turning the eraser off and on
+  //turning eraser on and off
+  if (mouseX>20 && mouseX<80 && mouseY>340 && mouseY<375) {
     ERASER=ERASER*-1;
     Stamp=false;
   }
   
-  if (mouseX>20 && mouseX<80 && mouseY>528 && mouseY<563) {//for new button-> clears the screen
+  //new button-->clears screen
+  if (mouseX>20 && mouseX<80 && mouseY>528 && mouseY<563) {
     drawlayer.beginDraw ();
       drawlayer.clear (); //this clears everything drawn on drawlayer
     drawlayer.endDraw ();
   }
   
-  if (mouseX>20 && mouseX<80 && mouseY>628 && mouseY<663) {//for the save button; saves image
+  //save button--->saves image
+  if (mouseX>20 && mouseX<80 && mouseY>676 && mouseY<711) {
     selectOutput ("Choose a name for your new image file", "saveImage"); //message, save function
     //selectOutput opens the file selection window, first message at top of window, second is function inside of program
   }
   
+  //for the load button
   if (mouseX>20 && mouseX<80 && mouseY>578 && mouseY<613) {
     selectInput ("Select an image to load", "openImage"); //message, load function
   }
@@ -187,6 +200,20 @@ void saveImage (File f) {//parameter is for file you choose, f is jsut generic n
   }
 }
 
+void openImage (File f) {
+  drawlayer.beginDraw ();
+    if (f!=null) {
+      int n=0;
+      while (n<10) {//wont work first time so it makes it keep trying to load image
+        PImage pic=loadImage(f.getPath());
+        drawlayer.image (pic, 100, 100);//loads the image at the coordinates
+        n=n+1;
+      }
+    }
+  drawlayer.endDraw ();
+}
+
+//if the mouse clicks on the place, it changes the colour
 void changecolour (int x, int y, int c) {//if the mouse is over the coordinates, it will change the colours in void changing
   if (dist (x, y, mouseX, mouseY)<25 && toggle>0) {//if the mouse clicks on the coordinates of the colour palette, and the window is open
     whatcolour=c;
@@ -198,14 +225,14 @@ void changecolour (int x, int y, int c) {//if the mouse is over the coordinates,
 }
 
 void changing () {//this will change the colours of the colour indicator
-  changecolour (197, 250, red);
-  changecolour (263, 250, orange);
-  changecolour (197, 310, yellow);
-  changecolour (263, 310, green);
-  changecolour (197, 370, blue);
-  changecolour (263, 370, purple);
-  changecolour (197, 430, lightgrey);
-  changecolour (263, 430, black);
+  changecolour (197, 210, red);
+  changecolour (263, 210, orange);
+  changecolour (197, 270, yellow);
+  changecolour (263, 270, green);
+  changecolour (197, 330, blue);
+  changecolour (263, 330, purple);
+  changecolour (197, 390, lightgrey);
+  changecolour (263, 390, black);
 }
 
 void buttons (int x, int y) {
@@ -263,17 +290,19 @@ void moveslider () {
 void STAMP () {
   drawlayer.beginDraw ();
   
-    if (mouseX>100) {
-      if (Stamp==false) {//for single= its equa to that value, ==you're ocmparing them
-        //drawing the squiggly line
-       // stroke (drawcolour);
-       drawlayer.stroke (whatcolour);
-        if (mouseX>100) {//prevents seeing flashes of colour from drawing on toolbar
-          drawlayer.strokeWeight (diameter);
-          drawlayer.line (pmouseX, pmouseY, mouseX, mouseY); //pmouseX and pmouseY are the mouse's previous coordinates
-        } 
-      } else {
-          drawlayer.image (stamp, mouseX, mouseY, diameter, diameter*1.27);
+    if (toggle<0) {//make it so that when the colour palette is on and you select a colour, it doesnt make a dot on the screen
+      if (mouseX>100) {
+        if (Stamp==false) {//for single= its equal to that value, ==you're ocmparing them
+          //drawing the squiggly line
+         // stroke (drawcolour);
+         drawlayer.stroke (whatcolour);
+          if (mouseX>100) {//prevents seeing flashes of colour from drawing on toolbar
+            drawlayer.strokeWeight (diameter);
+            drawlayer.line (pmouseX, pmouseY, mouseX, mouseY); //pmouseX and pmouseY are the mouse's previous coordinates
+          } 
+        } else {
+            drawlayer.image (stamp, mouseX, mouseY, diameter, diameter*1.27);
+        }
       }
     }
     
@@ -288,8 +317,7 @@ void Eraser () {
 
 //to do:
 //make stamp in middle of image
-//make load and save button
+//make save button
 //organize code
-//clicking colour button should turn stamp off
-//make it so that you can't draw when clicking the colour buttons
 //make it so colour is off hwen you click eraser
+//add another stamp
