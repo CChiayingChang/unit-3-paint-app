@@ -8,7 +8,8 @@ color blue=#00C5FF;
 color purple=#7E00FF;
 color black=#000000;
 color darkgrey=#989697;
-color lightgrey=#DBDBDB;
+color lightblue=#6AD8FF;
+color lightgrey=#D8D8D8;
 int whatcolour;
 int toggle;
 float sliderY;
@@ -25,6 +26,10 @@ PImage banana;
 
 void setup () {
   size (1050, 750);
+  surface.setTitle ("Cassandra's Paint App");//sets the name at the top of the screen
+  PImage icon=loadImage("icon.png");//sets an image as the icon for the app
+  surface.setIcon (icon);
+  
   background (white);
   whatcolour=red;
   toggle = -1;
@@ -58,7 +63,11 @@ void draw () {
    tactilerectangle (20, 80, 290, 325);
    rect (20, 290, 60, 35);
    textSize (20);
-   fill (black);
+   if (whatcolour==black || whatcolour==purple) {
+     fill (white);
+   } else {
+     fill (black);
+   }
    text ("colour", 23, 313);
    fill (whatcolour);
     
@@ -82,7 +91,7 @@ void draw () {
   if (BANANA==false) {
     fill (white);
   } else {
-    fill (lightgrey);
+    fill (lightblue);
   }
   tactilerectangle (20, 80, 390, 468);
   rect (20, 390, 60, 78);
@@ -92,7 +101,7 @@ void draw () {
   if (Stamp==false) {
     fill (white);
   } else {
-    fill (lightgrey);
+    fill (lightblue);
   }
   strokeWeight (2);
   tactilerectangle (20, 80, 483, 561);
@@ -123,7 +132,7 @@ void draw () {
   textSize (20);
   text ("save", 31, 698);
   
-  println (mouseX, mouseY);
+  //println (mouseX, mouseY);
 }
 
 void button (int x, int y, int c) {
@@ -221,8 +230,10 @@ void mousePressed () {
 
 void saveImage (File f) {//parameter is for file you choose, f is jsut generic name for file
   if (f != null) { //null is checking if it's not null, if they didn't press cancel
-    PImage canvas = get (100, 0, 950, 750); //x, y, w, h, saving as new image
-    canvas.save(f.getAbsolutePath()); 
+    PImage canvas = get (200, 0, 1900, 1500); //x, y, w, h, saving as new image
+    
+    println(canvas.width, canvas.height);
+    canvas.save(f.getAbsolutePath());
   }
 }
 
@@ -230,9 +241,9 @@ void openImage (File f) {
   drawlayer.beginDraw ();
     if (f!=null) {
       int n=0;
-      while (n<10) {//wont work first time so it makes it keep trying to load image
+      while (n<5) {//wont work first time so it makes it keep trying to load image
         PImage pic=loadImage(f.getPath());
-        drawlayer.image (pic, 100, 100);//loads the image at the coordinates
+        drawlayer.image (pic, 200, 200, 500, 500);//loads the image at the coordinates
         n=n+1;
       }
     }
@@ -291,19 +302,29 @@ void colourwindow (int x, int y) {//this is the window thawt pops up with the co
 void mouseDragged () { 
   STAMP (); //this is for both stamps
   moveslider ();
-  Eraser ();
 }
 
 void slider (int x) {
   strokeWeight (3);
   if ((mouseX>50-diameter/2 && mouseX< 50+diameter/2 && mouseY>sliderY-diameter/2 && mouseY<sliderY+diameter/2) || (mouseX>48 && mouseX<52 && mouseY>30 && mouseY<250) ) {
+    //if the mouse is over the circle (50 is the x coordinate of the line, +- radius of circle) or over the line
     stroke (white);
   } else {
     stroke (black);
-  } //if the mouse is over the slider line, or if its over the slider knob, the stroke turns white
+  }
   line (x, 50, x, 270);
   fill (whatcolour);
   strokeWeight (2);
+  if ((mouseX>50-diameter/2 && mouseX< 50+diameter/2 && mouseY>sliderY-diameter/2 && mouseY<sliderY+diameter/2) || (mouseX>48 && mouseX<52 && mouseY>30 && mouseY<250) ) {
+    //if the mouse is over the circle (50 is the x coordinate of the line, +- radius of circle) or over the line
+    stroke (white);
+  } else {
+    if (diameter<5) {
+      stroke (whatcolour);//so the slider knob doesnt become invisible agaisnt the slider line;
+    } else {
+      stroke (black);
+    }
+  }
   circle (x, sliderY, diameter);
 }
 
@@ -322,7 +343,11 @@ void STAMP () {
         if (Stamp==false && BANANA==false) {//for single= its equal to that value, ==you're ocmparing them
           //drawing the squiggly line
          // stroke (drawcolour);
-         drawlayer.stroke (whatcolour);
+         if (ERASER<1) {
+           drawlayer.stroke (white);
+         } else {
+           drawlayer.stroke (whatcolour);
+         }
           if (mouseX>100) {//prevents seeing flashes of colour from drawing on toolbar
             drawlayer.strokeWeight (diameter);
             drawlayer.line (pmouseX, pmouseY, mouseX, mouseY); //pmouseX and pmouseY are the mouse's previous coordinates
@@ -340,14 +365,3 @@ void STAMP () {
     
   drawlayer.endDraw ();
 }
-
-void Eraser () {
-  if (ERASER<0) {
-    whatcolour=white;
-  }
-}
-
-//to do:
-//make save button
-//organize code
-//make it so colour is off hwen you click eraser
