@@ -19,6 +19,8 @@ boolean Stamp; //true or false
 PImage eraser;
 int ERASER;
 PGraphics drawlayer;
+boolean BANANA;
+PImage banana;
 
 
 void setup () {
@@ -33,6 +35,8 @@ void setup () {
   eraser=loadImage ("eraser.png");
   ERASER=1;
   drawlayer= createGraphics (1050, 750); //w, h
+  BANANA=false;
+  banana= loadImage ("banana.png");
 }
 
 void draw () {
@@ -74,32 +78,42 @@ void draw () {
   rect (20, 340, 60, 35);
   image (eraser, 35, 340, 40, 35); //image, x, y, w, h
   
-  //stamp button
+  //banana stamp
+  if (BANANA==false) {
+    fill (white);
+  } else {
+    fill (lightgrey);
+  }
+  tactilerectangle (20, 80, 390, 468);
+  rect (20, 390, 60, 78);
+  image (banana, 23, 395, 55, 70);
+  
+  //stamp button face
   if (Stamp==false) {
     fill (white);
   } else {
     fill (lightgrey);
   }
   strokeWeight (2);
-  tactilerectangle (20, 80, 435, 513);
-  rect (20, 435, 60, 78);
-  image (stamp, 23, 440, 55, 70); //image, x, y, w, h
+  tactilerectangle (20, 80, 483, 561);
+  rect (20, 483, 60, 78);
+  image (stamp, 23, 488, 55, 70); //image, x, y, w, h
   
   //new button
-  tactilerectangle (20, 80, 528, 563);//put this above text; otherwise for some reason tactilerectangle from stamp spills over
+  tactilerectangle (20, 80, 576, 611);//put this above text; otherwise for some reason tactilerectangle from stamp spills over
   fill (black);
-  rect (20, 528, 60, 35);
+  rect (20, 576, 60, 35);
   textSize (20);
   fill (white);
-  text ("new", 32, 550);
+  text ("new", 32, 602);
   
   //load button
-  tactilerectangle (20, 80, 578, 613);
+  tactilerectangle (20, 80, 626, 661);
   fill (black);
-  rect (20, 578, 60, 35);
+  rect (20, 626, 60, 35);
   textSize (20);
   fill (white);
-  text ("load", 32, 605);
+  text ("load", 32, 653);
   
   //save button
   tactilerectangle (20, 80, 676, 711);
@@ -147,6 +161,7 @@ void mousePressed () {
     }
     //stamp turns off when you press the colour palette button
     Stamp=false;
+    BANANA=false;
   }
   
   //colour palette->if its on and you click on the drawing screen outside of the colour palette (the rectangle part), the palette disappears
@@ -160,22 +175,33 @@ void mousePressed () {
   
   STAMP ();
   //turns stamp on and off
-  if (mouseX>20 && mouseX <80 && mouseY>435 && mouseY<513) {
+  if (mouseX>20 && mouseX <80 && mouseY>483 && mouseY<561) {
     Stamp=!Stamp; ///if its false, becomes true, if its true, becomes false
     //if the eraser is on, turn it off when stamp button is clicked
     if (ERASER<0) {
       ERASER=ERASER*-1;
     }
+    //turns off banana stamp
+    BANANA=false;
+  }
+  
+  if (mouseX>20 && mouseX<80 && mouseY>390 && mouseY<468) {
+    BANANA=!BANANA;
+    if (ERASER<0) {
+      ERASER=ERASER*-1;
+    }
+    Stamp=false;
   }
   
   //turning eraser on and off
   if (mouseX>20 && mouseX<80 && mouseY>340 && mouseY<375) {
     ERASER=ERASER*-1;
     Stamp=false;
+    BANANA=false;
   }
   
   //new button-->clears screen
-  if (mouseX>20 && mouseX<80 && mouseY>528 && mouseY<563) {
+  if (mouseX>20 && mouseX<80 && mouseY>576 && mouseY<611) {
     drawlayer.beginDraw ();
       drawlayer.clear (); //this clears everything drawn on drawlayer
     drawlayer.endDraw ();
@@ -188,7 +214,7 @@ void mousePressed () {
   }
   
   //for the load button
-  if (mouseX>20 && mouseX<80 && mouseY>578 && mouseY<613) {
+  if (mouseX>20 && mouseX<80 && mouseY>626 && mouseY<661) {
     selectInput ("Select an image to load", "openImage"); //message, load function
   }
 }
@@ -221,6 +247,7 @@ void changecolour (int x, int y, int c) {//if the mouse is over the coordinates,
       ERASER=ERASER*-1;
     }
     Stamp=false; //turns the stamp off
+    BANANA=false;
   }
 }
 
@@ -262,7 +289,7 @@ void colourwindow (int x, int y) {//this is the window thawt pops up with the co
 }
 
 void mouseDragged () { 
-  STAMP ();
+  STAMP (); //this is for both stamps
   moveslider ();
   Eraser ();
 }
@@ -292,7 +319,7 @@ void STAMP () {
   
     if (toggle<0) {//make it so that when the colour palette is on and you select a colour, it doesnt make a dot on the screen
       if (mouseX>100) {
-        if (Stamp==false) {//for single= its equal to that value, ==you're ocmparing them
+        if (Stamp==false && BANANA==false) {//for single= its equal to that value, ==you're ocmparing them
           //drawing the squiggly line
          // stroke (drawcolour);
          drawlayer.stroke (whatcolour);
@@ -301,7 +328,12 @@ void STAMP () {
             drawlayer.line (pmouseX, pmouseY, mouseX, mouseY); //pmouseX and pmouseY are the mouse's previous coordinates
           } 
         } else {
-            drawlayer.image (stamp, mouseX, mouseY, diameter, diameter*1.27);
+            if (BANANA==true && Stamp==false) {
+              drawlayer.image (banana, mouseX-diameter/2, mouseY-diameter*0.635, diameter, diameter*1.27);
+            } else {
+              drawlayer.image (stamp, mouseX-diameter/2, mouseY-diameter*0.635, diameter, diameter*1.27);
+              //the subtraction for mouseX and mouseY makes it so that the center of the stamp is where you click
+            }
         }
       }
     }
@@ -316,8 +348,6 @@ void Eraser () {
 }
 
 //to do:
-//make stamp in middle of image
 //make save button
 //organize code
 //make it so colour is off hwen you click eraser
-//add another stamp
