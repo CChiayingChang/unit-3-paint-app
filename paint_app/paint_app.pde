@@ -230,7 +230,7 @@ void mousePressed () {
 
 void saveImage (File f) {//parameter is for file you choose, f is jsut generic name for file
   if (f != null) { //null is checking if it's not null, if they didn't press cancel
-    PImage canvas = get (200, 0, 1900, 1500); //x, y, w, h, saving as new image
+    PImage canvas = drawlayer.get (0, 0, 950*3, 750*2); //x, y, w, h, saving as new image
     
     println(canvas.width, canvas.height);
     canvas.save(f.getAbsolutePath());
