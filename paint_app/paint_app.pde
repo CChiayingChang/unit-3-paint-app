@@ -243,7 +243,7 @@ void openImage (File f) {
       int n=0;
       while (n<5) {//wont work first time so it makes it keep trying to load image
         PImage pic=loadImage(f.getPath());
-        drawlayer.image (pic, 200, 200, 500, 500);//loads the image at the coordinates
+        drawlayer.image (pic, 200, 200, 900, 500);//loads the image at the coordinates
         n=n+1;
       }
     }
